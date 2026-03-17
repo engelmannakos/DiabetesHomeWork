@@ -20,12 +20,12 @@ At the end we can see how the threshold affects the _endangered_ feature distrib
 
 ### Multivariate Analysis
 The heatmap in this section shows the correlation between the features. We can see that usually they are not correlated, however in some cases (_s1 & s2_) a higher correlation can be seen.
-![Small heatmap]()
+![Small heatmap](https://github.com/engelmannakos/DiabetesHomeWork/blob/main/small_heatmap.png)
 *_s1 & s2_ are highly correlated*
 
 The pairplot shows that the _endangered_ samples are usually not distinct from the others, there are no separate groups in any feature combination. On the diagonal we can see that the _endangered_ samples sometimes have a similar distribution to the _not endangered_ ones, seemingly with similar mean/median/mode. For example, feature _age_ shows that both groups have only a few samples under 20 and over 80, but a lot more around 50.
 Other features seem to have a bigger impact on whether someone is _endangered_ or not, e.g. _bmi_ and _bp_, where the _endangered_ group have higher values in both features.
-![Small pairplot]()
+![Small pairplot](https://github.com/engelmannakos/DiabetesHomeWork/blob/main/small_pairplot.png)
 *Pairplot of the age, bmi and bp features in Scenario 1*
 
 ### Handling Outliers
@@ -59,12 +59,12 @@ To evaluate the models' performances, the confusion matrix, the accuracy score (
 
 - Scenario 1
     - All models performed similarly. Where one found more TPs (e.g. SVM), the other found more TNs (e.g. Random Forest), resulting in similar metric scores. The accuracy score stayed around 77%, and if we look into the matrix and the precision/recall/f1-score metrics, we can see that the models labeled the _not endangered_ samples relatively correctly (~80-90% recall), but performed worse labeling the _endangered_ ones (~65% recall). The ROC AUC Score is around ~76%, which is moderately good, but only half-way between random guessing (50%) and perfect separation (100%).
-![Scenario 1 RF and SVM confusion matrices]()
+![Scenario 1 RF and SVM confusion matrices](https://github.com/engelmannakos/DiabetesHomeWork/blob/main/matrices_scen1.png)
 *Confusion matrices of the Random Forest and SVM models in Scenario 1*
 
 - Scenario 2
     - In this case the models performed similarly to each other, but all had a main difference compared to Scenario 1. As the dataset contained less _endangered_ samples, the models were struggling with learning the patterns, causing the low recall scores (~20-40%) for _endangered_. In this case the accuracy is misleading as it shows a high value even if barely any _endangered_ samples were labeled correctly. The ROC AUC Score doesn't work well with highly imbalanced classes, the PR Score is more relevant, and it shows that the model didn't work well.
-![Scenario 2 RF and SVM confusion matrices]()
+![Scenario 2 RF and SVM confusion matrices](https://github.com/engelmannakos/DiabetesHomeWork/blob/main/matrices_scen2.png)
 *Confusion matrices of the Random Forest and SVM models in Scenario 2*
 
 ## Conclusion
