@@ -1,6 +1,6 @@
 # Diabetes HomeWork
-[!NOTE]
-Since the assignment was in English, I wrote this README and the comments in English as well.
+>[!NOTE]
+>Since the assignment was in English, I wrote this README and the comments in English as well.
 
 ## Exploratory Data Analysis
 ### Data Collection
