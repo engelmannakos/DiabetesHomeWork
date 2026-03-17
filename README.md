@@ -12,9 +12,9 @@ In this section we can see that all features are numeric (float64), there are no
 ### Univariate Analysis
 Here we can check what distribution each feature has (usually normal with a left/right skew) and if they have outliers.
 ![Distribution example](https://github.com/engelmannakos/DiabetesHomeWork/blob/main/s6_box_hist.png)
-*Feature s6 - An example for a feature's distribution and its outliers*
+*Feature s6 - An example of a feature's distribution and its outliers*
 
-At the end we can see how the threshold affects the _endangered_ feature distribution. In Scenario 1 with a lower threshold the classes are somewhat balanced (_not endangered_: 242 and _endangered_: 200, 1.2x ratio), however in Scenario 2 where the threshold is higher, the dataset is more imbalanced (_not endangered_: 377 and _endangered_: 65, 5.8x ratio).
+Finally, we can see how the threshold affects the _endangered_ feature distribution. In Scenario 1 with a lower threshold the classes are somewhat balanced (_not endangered_: 242 and _endangered_: 200, 1.2x ratio), however in Scenario 2 where the threshold is higher, the dataset is more imbalanced (_not endangered_: 377 and _endangered_: 65, 5.8x ratio).
 ![Target distributions](https://github.com/engelmannakos/DiabetesHomeWork/blob/main/target_distributions.png)
 *Number of Endangered-Not Endangered samples in both scenarios*
 
@@ -23,7 +23,7 @@ The heatmap in this section shows the correlation between the features. We can s
 ![Small heatmap](https://github.com/engelmannakos/DiabetesHomeWork/blob/main/small_heatmap.png)
 *_s1 & s2_ are highly correlated, while _s3 & s4_ are also somewhat correlated but negatively*
 
-The pairplot shows that the _endangered_ samples are usually not distinct from the others, there are no separate groups in any feature combination. On the diagonal we can see that the _endangered_ samples sometimes have a similar distribution to the _not endangered_ ones, seemingly with similar mean/median/mode. For example, feature _age_ shows that both groups have only a few samples under 20 and over 80, but a lot more around 50.
+The pairplot shows low class separability, there are no separate groups in any feature combination. On the diagonal we can see that the _endangered_ samples sometimes have a similar distribution to the _not endangered_ ones, seemingly with similar mean/median/mode. For example, feature _age_ shows that both groups have only a few samples under 20 and over 80, but a lot more around 50.
 Other features seem to have a bigger impact on whether someone is _endangered_ or not, e.g. _bmi_ and _bp_, where the _endangered_ group have higher values in both features.
 ![Small pairplot](https://github.com/engelmannakos/DiabetesHomeWork/blob/main/small_pairplot.png)
 *Pairplot of the age, bmi and bp features in Scenario 1*
@@ -32,7 +32,7 @@ Other features seem to have a bigger impact on whether someone is _endangered_ o
 As we've seen in section _Univariate Analysis_ the dataset contains a few outliers. Simply removing them would only create new outliers in other features, and, since we have only a few _endangered_ samples in Scenario 2, I wanted to avoid removing samples. Instead, a winsorizing technique was used here that replaced the values outside the 5th and 95th percentiles with the 5th and 95th percentiles. For example, this step was important for the Neural Network model, and not so much for the Random Forest model.
 
 ### Standardization
-As we've seen in section _Basic Information_, the features have different ranges, which could cause a lower model performance. To solve this issue, a standardization technique was used that transformed features to have a 0 mean and a 1 standard deviation.
+As we've seen in section _Basic Information_, the features have different ranges, which could cause a lower model performance. To solve this issue, StandardScaler was applied on the features to have a mean of 0 and a standard deviation of 1.
 
 ### Dimensionality Reduction
 The heatmap showed that there is a high (0.9) correlation between the features s1 and s2. However, to remove one of them confidently one should know more about the features, as they might correlate in some way, but represent different mechanisms.
@@ -52,7 +52,7 @@ After the train-test split, we check how many samples are in the train set (353)
     - test dataset: 75-14, ~5.4x ratio
 
 ### Model Training
-For both scenarios a group of classification models (LogisticRegression, Random Forest, SVM) and neural network (MLP) was used to look for the best results. All models were designed by scikit-learn.
+For both scenarios a group of classification models (LogisticRegression, Random Forest, SVM) and neural network (MLP) was used to look for the best results. All models were designed by scikit-learn, and tuning the hyperparameters did not result in any significant performance improvement most of the time.
 
 ### Model Evaluation
 To evaluate the models' performances, the confusion matrix, the accuracy score (separated), a whole classification report and the ROC AUC Score were taking into account.
@@ -63,7 +63,7 @@ To evaluate the models' performances, the confusion matrix, the accuracy score (
 *Confusion matrices of the Random Forest and SVM models in Scenario 1*
 
 - Scenario 2
-    - In this case the models performed similarly to each other, but all had a main difference compared to Scenario 1. As the dataset contained less _endangered_ samples, the models were struggling with learning the patterns, causing the low recall scores (~20-40%) for _endangered_. In this case the accuracy is misleading as it shows a high value even if barely any _endangered_ samples were labeled correctly. The ROC AUC Score doesn't work well with highly imbalanced classes, the PR Score is more relevant, and it shows that the model didn't work well.
+    - In this case the models performed similarly to each other, but all had a main difference compared to Scenario 1. As the dataset contained less _endangered_ samples, the models were struggling with learning the patterns, causing the low recall scores (~20-40%) for _endangered_. In this case the accuracy is misleading as it shows a high value even if barely any _endangered_ samples were labeled correctly. The class_weight hyperparameter, however, is designed for occasions like this. Changing it to 'balanced' helped the LogisticRegressor and SVM models to improve their performance on _endangered_ samples, but not the Random Forest. The SVM and the LogisticRegressor model have a higher recall score for _endangered_ samples (~75%) than the other models (~40%), however this changed led to decline in their _not endangered_ recall score. The ROC AUC Score doesn't work well with highly imbalanced classes, the PR Score is more relevant. It shows that the model didn't work well in most cases, but the modified SVM model earned a 0.4 score, which is relatively good.
 ![Scenario 2 RF and SVM confusion matrices](https://github.com/engelmannakos/DiabetesHomeWork/blob/main/matrices_scen2.png)
 *Confusion matrices of the Random Forest and SVM models in Scenario 2*
 
