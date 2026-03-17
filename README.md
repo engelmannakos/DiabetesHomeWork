@@ -12,6 +12,7 @@ In this section we can see that all features are numeric (float64), there are no
 ### Univariate Analysis
 Here we can check what distribution each feature has (usually normal with a left/right skew) and if they have outliers.
 ![Distribution example](https://github.com/engelmannakos/DiabetesHomeWork/blob/main/s6_box_hist.png)
+*Feature s6 - An example for a feature distribution and outliers*
 
 At the end we can see how the threshold affects the _endangered_ feature distribution. In Scenario 1 with a lower threshold the classes are somewhat balanced (_not endangered_: 242 and _endangered_: 200, 1.2x ratio), however in Scenario 2 where the threshold is higher, the dataset is more imbalanced (_not endangered_: 377 and _endangered_: 65, 5.8x ratio).
 
