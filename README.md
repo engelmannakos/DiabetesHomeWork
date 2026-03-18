@@ -37,19 +37,19 @@ Other features seem to have a bigger impact on whether someone is _endangered_ o
 *Pairplot of the age, bmi and bp features in Scenario 1*
 
 ### Handling Outliers
-As we've seen in section _Univariate Analysis_ the dataset contains a few outliers. Simply removing them would only create new outliers in other features, and, since we have only a few _endangered_ samples in Scenario 2, I wanted to avoid removing samples. Instead, a winsorizing technique was used here that replaced the values outside the 5th and 95th percentiles with the 5th and 95th percentiles. For example, this step was important for the Neural Network model, and not so much for the Random Forest model.
+As we've seen in section _Univariate Analysis_ the dataset contains a few outliers. Simply removing them would only create new outliers in other features, and, since we have only a few _endangered_ samples in Scenario 2, I wanted to avoid removing samples. Instead, a winsorizing technique was used here that replaced the values outside the 5th and 95th percentiles with the 5th and 95th percentiles. Due to their different nature, some model benefit from this step, some are not affected.
 
 ### Standardization
 As we've seen in section _Basic Information_, the features have different ranges, which could cause a lower model performance. To solve this issue, StandardScaler was applied on the features to have a mean of 0 and a standard deviation of 1.
 
 ### Dimensionality Reduction
-The heatmap showed that there is a high (0.9) correlation between the features s1 and s2. However, to remove one of them confidently one should know more about the features, as they might correlate in some way, but represent different mechanisms.
+The heatmap showed that there is a high (0.9) correlation between the features s1 and s2. However, to remove one of them confidently, one should know more about the features, as they might correlate in some way, but represent different mechanisms.
 
 A popular way to reduce the large number of features is PCA, that transforms the dataset to a lower dimension. In our case the models could not benefit from this reduction, therefore it was not used later. 
 
 ## Scenario 1 and Scenario 2
 ### Train-Test Split
-After the train-test split, we check how many samples are in the train set (353), and how many in the test set (89). We can also check if the _endangered_ samples have similar ratio in each set than in the original set.
+After the train-test split, we check how many samples are in the train set (353), and how many in the test set (89). We can also check if the proportion of the _endangered_ samples in each set is similar to the proportion in the original set.
 - Scenario 1
     - original dataset: 242-200, ~1.2x ratio
     - train dataset: 193-160, ~1.2x ratio
@@ -63,7 +63,7 @@ After the train-test split, we check how many samples are in the train set (353)
 For both scenarios a group of classification models (LogisticRegression, Random Forest, SVM) and neural network (MLP) was used to look for the best results. All models were designed by scikit-learn, and tuning the hyperparameters did not result in any significant performance improvement most of the time.
 
 ### Model Evaluation
-To evaluate the models' performances, the confusion matrix, the accuracy score (separated), a whole classification report and the ROC AUC Score were taking into account.
+To evaluate the models' performances, the confusion matrix, a whole classification report, the Precision-Recall Score and the ROC AUC Score were taking into account.
 
 - Scenario 1
     - All models performed similarly. Where one found more TPs (e.g. SVM), the other found more TNs (e.g. Random Forest), resulting in similar metric scores. The accuracy score stayed around 77%, and if we look into the matrix and the precision/recall/f1-score metrics, we can see that the models labeled the _not endangered_ samples relatively correctly (~80-90% recall), but performed worse labeling the _endangered_ ones (~65% recall). The ROC AUC Score is around ~76%, which is moderately good, but only half-way between random guessing (50%) and perfect separation (100%).
@@ -73,11 +73,11 @@ To evaluate the models' performances, the confusion matrix, the accuracy score (
 *Confusion matrices of the Random Forest and SVM models in Scenario 1*
 
 - Scenario 2
-    - In this case the models performed similarly to each other, but all had a main difference compared to Scenario 1. As the dataset contained less _endangered_ samples, the models were struggling with learning the patterns, causing the low recall scores (~20-40%) for _endangered_. In this case the accuracy is misleading as it shows a high value even if barely any _endangered_ samples were labeled correctly. The class_weight hyperparameter, however, is designed for occasions like this. Changing it to 'balanced' helped the LogisticRegressor and SVM models to improve their performance on _endangered_ samples, but not the Random Forest. The SVM and the LogisticRegressor model have a higher recall score for _endangered_ samples (~75%) than the other models (~40%), however these changes led to decline in their _not endangered_ recall score. The ROC AUC Score doesn't work well with highly imbalanced classes, the PR Score is more relevant. It shows that the model didn't work well in most cases, but the modified SVM model earned a 0.4 score, which is relatively good.
+    - In this case the models performed similarly to each other, but all had a main difference compared to Scenario 1. As the dataset contained less _endangered_ samples, the models were struggling with learning the patterns, causing the low recall scores (~40%) for _endangered_. In this case the accuracy is misleading as it shows a high value even if barely any _endangered_ samples were labeled correctly. The class_weight hyperparameter, however, is designed for occasions like this. Changing it to 'balanced' helped the LogisticRegressor and SVM models to improve their performance on _endangered_ samples, but not the Random Forest. The SVM and the LogisticRegressor model have a higher recall score for _endangered_ samples (~75%) than the other models (~40%), however these changes led to decline in their _not endangered_ recall score. The ROC AUC Score doesn't work well with highly imbalanced classes, the PR Score is more relevant. It shows that the model didn't work well in most cases, but the modified SVM model earned a 0.4 score, which is relatively good.
 
 ![Scenario 2 RF and SVM confusion matrices](https://github.com/engelmannakos/DiabetesHomeWork/blob/main/matrices_scen2.png)
 
 *Confusion matrices of the Random Forest and SVM models in Scenario 2*
 
 ## Conclusion
-The evaluation of Scenario 1 showed promising results with room for improvement in labeling _endangered_ samples. Scenario 2 on the other hand had the same type of issue, only with worse scores. In my opinion, there are 2 reasons for this result. First, the dataset doesn't contain enough samples (only 442) and the models cannot learn the patterns. And second, as we've seen on the pairplot in section _Multivariate Analysis_ the samples are overlapping each other, which makes learning more difficult.
+The evaluation of Scenario 1 showed promising results with room for improvement in labeling _endangered_ samples. Scenario 2 on the other hand had the same type of issue, only with lower scores, due to its higher threshold. This performance can be attributed to two primary factors: data sparsity (the dataset contains a low number of samples and the models cannot learn the patterns) and class separability (on the pairplot in section _Multivariate Analysis_ the samples are overlapping each other, making the learning more difficult). After data preprocessing the _standardization_ and _winsorization_ somewhat improved the results, unlike the dimensionality reduction.
